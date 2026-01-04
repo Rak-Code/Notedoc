@@ -1,22 +1,29 @@
 package com.rakeshgupta.notedoc_backend.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 
 /**
  * DTO for note update requests with optional field validation
  */
+@Schema(description = "Request object for updating an existing note. All fields are optional.")
 public class NoteUpdateRequestDto {
     
     @Size(max = 255, message = "Title must not exceed 255 characters")
+    @Schema(description = "Updated note title", example = "Updated Meeting Notes", maxLength = 255)
     private String title;
     
+    @Schema(description = "Updated note content in markdown format", example = "## Updated Agenda\n- Finalize project timeline\n- Approve budget")
     private String content;
     
+    @Schema(description = "Updated set of tags for categorizing the note", example = "[\"work\", \"meeting\", \"project\", \"urgent\"]")
     private Set<String> tags;
     
+    @Schema(description = "Updated pinned status", example = "true")
     private Boolean pinned;
     
+    @Schema(description = "Updated archived status", example = "false")
     private Boolean archived;
 
     // Default constructor
