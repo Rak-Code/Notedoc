@@ -1,0 +1,11 @@
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
+.env 
+.kiro
+
+u
+.gitattributes
+.gitignore
+.travis.yml
+
