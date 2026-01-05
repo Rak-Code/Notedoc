@@ -1,29 +1,30 @@
 package com.rakeshgupta.notedoc_backend.dto.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+// Swagger import removed for lightweight build
+// import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 
 /**
  * DTO for note update requests with optional field validation
  */
-@Schema(description = "Request object for updating an existing note. All fields are optional.")
+// @Schema(description = "Request object for updating an existing note. All fields are optional.") // Swagger annotation removed
 public class NoteUpdateRequestDto {
     
     @Size(max = 255, message = "Title must not exceed 255 characters")
-    @Schema(description = "Updated note title", example = "Updated Meeting Notes", maxLength = 255)
+    // @Schema(description = "Updated note title", example = "Updated Meeting Notes", maxLength = 255) // Swagger annotation removed
     private String title;
     
-    @Schema(description = "Updated note content in markdown format", example = "## Updated Agenda\n- Finalize project timeline\n- Approve budget")
+    // @Schema(description = "Updated note content in markdown format", example = "## Updated Agenda\n- Finalize project timeline\n- Approve budget") // Swagger annotation removed
     private String content;
     
-    @Schema(description = "Updated set of tags for categorizing the note", example = "[\"work\", \"meeting\", \"project\", \"urgent\"]")
+    // @Schema(description = "Updated set of tags for categorizing the note", example = "[\"work\", \"meeting\", \"project\", \"urgent\"]") // Swagger annotation removed
     private Set<String> tags;
     
-    @Schema(description = "Updated pinned status", example = "true")
+    // @Schema(description = "Updated pinned status", example = "true") // Swagger annotation removed
     private Boolean pinned;
     
-    @Schema(description = "Updated archived status", example = "false")
+    // @Schema(description = "Updated archived status", example = "false") // Swagger annotation removed
     private Boolean archived;
 
     // Default constructor

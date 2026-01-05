@@ -14,7 +14,7 @@ public class KeepAliveService {
 
     private final RestClient restClient;
 
-    @Value("${app.url:http://localhost:8080}")
+    @Value("${app.url:https://notedoc.onrender.com}")
     private String appUrl;
 
     @Value("${app.health-check.endpoint:/api/health}")

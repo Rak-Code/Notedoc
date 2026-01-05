@@ -1,6 +1,7 @@
 package com.rakeshgupta.notedoc_backend.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+// Swagger import removed for lightweight build
+// import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -8,34 +9,34 @@ import java.util.UUID;
 /**
  * DTO for note response with all note fields
  */
-@Schema(description = "Response object containing complete note information")
+// @Schema(description = "Response object containing complete note information") // Swagger annotation removed
 public class NoteResponseDto {
     
-    @Schema(description = "Unique identifier of the note", example = "123e4567-e89b-12d3-a456-426614174000")
+    // @Schema(description = "Unique identifier of the note", example = "123e4567-e89b-12d3-a456-426614174000") // Swagger annotation removed
     private UUID id;
     
-    @Schema(description = "Note title", example = "Meeting Notes")
+    // @Schema(description = "Note title", example = "Meeting Notes") // Swagger annotation removed
     private String title;
     
-    @Schema(description = "Note content in markdown format", example = "## Agenda\n- Discuss project timeline\n- Review budget")
+    // @Schema(description = "Note content in markdown format", example = "## Agenda\n- Discuss project timeline\n- Review budget") // Swagger annotation removed
     private String content;
     
-    @Schema(description = "Set of tags associated with the note", example = "[\"work\", \"meeting\", \"project\"]")
+    // @Schema(description = "Set of tags associated with the note", example = "[\"work\", \"meeting\", \"project\"]") // Swagger annotation removed
     private Set<String> tags;
     
-    @Schema(description = "Whether the note is pinned", example = "false")
+    // @Schema(description = "Whether the note is pinned", example = "false") // Swagger annotation removed
     private Boolean pinned;
     
-    @Schema(description = "Whether the note is archived", example = "false")
+    // @Schema(description = "Whether the note is archived", example = "false") // Swagger annotation removed
     private Boolean archived;
     
-    @Schema(description = "ID of the user who owns this note", example = "11111111-1111-1111-1111-111111111111")
+    // @Schema(description = "ID of the user who owns this note", example = "11111111-1111-1111-1111-111111111111") // Swagger annotation removed
     private UUID userId;
     
-    @Schema(description = "Timestamp when the note was created", example = "2024-01-15T10:30:00")
+    // @Schema(description = "Timestamp when the note was created", example = "2024-01-15T10:30:00") // Swagger annotation removed
     private LocalDateTime createdAt;
     
-    @Schema(description = "Timestamp when the note was last updated", example = "2024-01-15T14:45:00")
+    // @Schema(description = "Timestamp when the note was last updated", example = "2024-01-15T14:45:00") // Swagger annotation removed
     private LocalDateTime updatedAt;
 
     // Default constructor

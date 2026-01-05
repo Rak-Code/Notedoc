@@ -5,13 +5,14 @@ import com.rakeshgupta.notedoc_backend.dto.request.NoteUpdateRequestDto;
 import com.rakeshgupta.notedoc_backend.dto.response.ErrorResponse;
 import com.rakeshgupta.notedoc_backend.dto.response.NoteResponseDto;
 import com.rakeshgupta.notedoc_backend.service.NoteService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+// Swagger imports removed for lightweight build
+// import io.swagger.v3.oas.annotations.Operation;
+// import io.swagger.v3.oas.annotations.Parameter;
+// import io.swagger.v3.oas.annotations.media.Content;
+// import io.swagger.v3.oas.annotations.media.Schema;
+// import io.swagger.v3.oas.annotations.responses.ApiResponse;
+// import io.swagger.v3.oas.annotations.responses.ApiResponses;
+// import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/notes")
-@Tag(name = "Notes", description = "Note management operations")
+// @Tag(name = "Notes", description = "Note management operations") // Swagger annotation removed
 public class NoteController {
 
     /**
@@ -55,6 +56,8 @@ public class NoteController {
      * @return ResponseEntity with created note data and HTTP 201 status
      */
     @PostMapping
+    // Swagger annotations removed for lightweight build
+    /*
     @Operation(
         summary = "Create a new note",
         description = "Creates a new note with the provided title and content"
@@ -71,9 +74,10 @@ public class NoteController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
+    */
     public ResponseEntity<NoteResponseDto> createNote(
             @Valid @RequestBody 
-            @Parameter(description = "Note creation request", required = true)
+            // @Parameter(description = "Note creation request", required = true) // Swagger annotation removed
             NoteCreateRequestDto request) {
         NoteResponseDto createdNote = noteService.createNote(request, HARDCODED_USER_ID);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
@@ -88,6 +92,8 @@ public class NoteController {
      * @return ResponseEntity with paginated notes and HTTP 200 status
      */
     @GetMapping
+    // Swagger annotations removed for lightweight build
+    /*
     @Operation(
         summary = "Get all notes",
         description = "Retrieves all notes with pagination and sorting support"
@@ -99,15 +105,16 @@ public class NoteController {
             content = @Content(schema = @Schema(implementation = Page.class))
         )
     })
+    */
     public ResponseEntity<Page<NoteResponseDto>> getAllNotes(
             @RequestParam(defaultValue = "0") 
-            @Parameter(description = "Page number (0-based)", example = "0")
+            // @Parameter(description = "Page number (0-based)", example = "0") // Swagger annotation removed
             int page,
             @RequestParam(defaultValue = "10") 
-            @Parameter(description = "Number of items per page", example = "10")
+            // @Parameter(description = "Number of items per page", example = "10") // Swagger annotation removed
             int size,
             @RequestParam(defaultValue = "updatedAt,desc") 
-            @Parameter(description = "Sort specification (field,direction)", example = "updatedAt,desc")
+            // @Parameter(description = "Sort specification (field,direction)", example = "updatedAt,desc") // Swagger annotation removed
             String sort) {
         
         // Parse sort parameter
@@ -130,6 +137,8 @@ public class NoteController {
      * @return ResponseEntity with note data and HTTP 200 status
      */
     @GetMapping("/{id}")
+    // Swagger annotations removed for lightweight build
+    /*
     @Operation(
         summary = "Get note by ID",
         description = "Retrieves a specific note by its unique identifier"
@@ -146,9 +155,10 @@ public class NoteController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
+    */
     public ResponseEntity<NoteResponseDto> getNoteById(
             @PathVariable 
-            @Parameter(description = "Note unique identifier", required = true)
+            // @Parameter(description = "Note unique identifier", required = true) // Swagger annotation removed
             UUID id) {
         NoteResponseDto note = noteService.getNoteById(id, HARDCODED_USER_ID);
         return ResponseEntity.ok(note);
@@ -162,6 +172,8 @@ public class NoteController {
      * @return ResponseEntity with updated note data and HTTP 200 status
      */
     @PutMapping("/{id}")
+    // Swagger annotations removed for lightweight build
+    /*
     @Operation(
         summary = "Update a note",
         description = "Updates an existing note with new title and/or content"
@@ -183,12 +195,13 @@ public class NoteController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
+    */
     public ResponseEntity<NoteResponseDto> updateNote(
             @PathVariable 
-            @Parameter(description = "Note unique identifier", required = true)
+            // @Parameter(description = "Note unique identifier", required = true) // Swagger annotation removed
             UUID id, 
             @Valid @RequestBody 
-            @Parameter(description = "Note update request", required = true)
+            // @Parameter(description = "Note update request", required = true) // Swagger annotation removed
             NoteUpdateRequestDto request) {
         NoteResponseDto updatedNote = noteService.updateNote(id, request, HARDCODED_USER_ID);
         return ResponseEntity.ok(updatedNote);
@@ -201,6 +214,8 @@ public class NoteController {
      * @return ResponseEntity with HTTP 204 status (No Content)
      */
     @DeleteMapping("/{id}")
+    // Swagger annotations removed for lightweight build
+    /*
     @Operation(
         summary = "Delete a note",
         description = "Soft deletes a note (marks as deleted without removing from database)"
@@ -216,9 +231,10 @@ public class NoteController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
+    */
     public ResponseEntity<Void> deleteNote(
             @PathVariable 
-            @Parameter(description = "Note unique identifier", required = true)
+            // @Parameter(description = "Note unique identifier", required = true) // Swagger annotation removed
             UUID id) {
         noteService.deleteNote(id, HARDCODED_USER_ID);
         return ResponseEntity.noContent().build();
@@ -233,6 +249,8 @@ public class NoteController {
      * @return ResponseEntity with paginated search results and HTTP 200 status
      */
     @GetMapping("/search")
+    // Swagger annotations removed for lightweight build
+    /*
     @Operation(
         summary = "Search notes",
         description = "Searches notes by title and content using the provided query string"
@@ -249,15 +267,16 @@ public class NoteController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
+    */
     public ResponseEntity<Page<NoteResponseDto>> searchNotes(
             @RequestParam 
-            @Parameter(description = "Search query string", required = true, example = "meeting notes")
+            // @Parameter(description = "Search query string", required = true, example = "meeting notes") // Swagger annotation removed
             String q,
             @RequestParam(defaultValue = "0") 
-            @Parameter(description = "Page number (0-based)", example = "0")
+            // @Parameter(description = "Page number (0-based)", example = "0") // Swagger annotation removed
             int page,
             @RequestParam(defaultValue = "10") 
-            @Parameter(description = "Number of items per page", example = "10")
+            // @Parameter(description = "Number of items per page", example = "10") // Swagger annotation removed
             int size) {
         
         // Default sort for search is by updatedAt descending

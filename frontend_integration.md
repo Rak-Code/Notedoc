@@ -6,11 +6,20 @@ This guide provides comprehensive documentation for integrating with the NoteDoc
 
 ### API Base URL
 ```
+# Development
 http://localhost:8080/api
+
+# Production (replace with your actual backend URL)
+https://your-backend-app.onrender.com/api
 ```
 
 ### Content Type
 All requests should use `Content-Type: application/json`
+
+### CORS Configuration
+The backend is configured to accept requests from:
+- **Development**: `localhost:3000`, `localhost:5173`, `localhost:4200`
+- **Production**: `https://notedoc-alpha.vercel.app` and other `*.vercel.app` domains
 
 ### Authentication
 Currently using hardcoded user ID: `11111111-1111-1111-1111-111111111111`
@@ -292,34 +301,139 @@ console.log('Service status:', health.status); // "UP"
 ### 1. API Service Class
 ```typescript
 class NoteService {
-  private baseUrl = 'http://localhost:8080/api/notes';
+  private baseUrl: string;
+
+  constructor() {
+    // Automatically detect environment
+    this.baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://your-backend-app.onrender.com/api/notes'  // Replace with your backend URL
+      : 'http://localhost:8080/api/notes';
+  }
+
+  // Default fetch options with CORS support
+  private getDefaultOptions(): RequestInit {
+    return {
+      credentials: 'include', // Include cookies for CORS
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+  }
 
   async createNote(noteData: CreateNoteRequest): Promise<NoteResponse> {
-    // Implementation as shown above
+    const response = await fetch(this.baseUrl, {
+      ...this.getDefaultOptions(),
+      method: 'POST',
+      body: JSON.stringify(noteData)
+    });
+
+    if (!response.ok) {
+      const error: ErrorResponse = await response.json();
+      throw new Error(`Failed to create note: ${error.message}`);
+    }
+
+    return response.json();
   }
 
   async getAllNotes(params: GetNotesParams = {}): Promise<PagedResponse<NoteResponse>> {
-    // Implementation as shown above
+    const searchParams = new URLSearchParams({
+      page: (params.page || 0).toString(),
+      size: (params.size || 10).toString(),
+      sort: params.sort || 'updatedAt,desc'
+    });
+
+    const response = await fetch(`${this.baseUrl}?${searchParams}`, {
+      ...this.getDefaultOptions(),
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      const error: ErrorResponse = await response.json();
+      throw new Error(`Failed to fetch notes: ${error.message}`);
+    }
+
+    return response.json();
   }
 
   async getNoteById(id: string): Promise<NoteResponse> {
-    // Implementation as shown above
+    const response = await fetch(`${this.baseUrl}/${id}`, {
+      ...this.getDefaultOptions(),
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Note not found');
+      }
+      const error: ErrorResponse = await response.json();
+      throw new Error(`Failed to fetch note: ${error.message}`);
+    }
+
+    return response.json();
   }
 
   async updateNote(id: string, updates: UpdateNoteRequest): Promise<NoteResponse> {
-    // Implementation as shown above
+    const response = await fetch(`${this.baseUrl}/${id}`, {
+      ...this.getDefaultOptions(),
+      method: 'PUT',
+      body: JSON.stringify(updates)
+    });
+
+    if (!response.ok) {
+      const error: ErrorResponse = await response.json();
+      throw new Error(`Failed to update note: ${error.message}`);
+    }
+
+    return response.json();
   }
 
   async deleteNote(id: string): Promise<void> {
-    // Implementation as shown above
+    const response = await fetch(`${this.baseUrl}/${id}`, {
+      ...this.getDefaultOptions(),
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Note not found');
+      }
+      const error: ErrorResponse = await response.json();
+      throw new Error(`Failed to delete note: ${error.message}`);
+    }
   }
 
   async searchNotes(params: SearchNotesParams): Promise<PagedResponse<NoteResponse>> {
-    // Implementation as shown above
+    const searchParams = new URLSearchParams({
+      q: params.q,
+      page: (params.page || 0).toString(),
+      size: (params.size || 10).toString()
+    });
+
+    const response = await fetch(`${this.baseUrl}/search?${searchParams}`, {
+      ...this.getDefaultOptions(),
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      const error: ErrorResponse = await response.json();
+      throw new Error(`Search failed: ${error.message}`);
+    }
+
+    return response.json();
   }
 
   async healthCheck(): Promise<HealthResponse> {
-    // Implementation as shown above
+    const healthUrl = this.baseUrl.replace('/notes', '/health');
+    const response = await fetch(healthUrl, {
+      ...this.getDefaultOptions(),
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Health check failed');
+    }
+
+    return response.json();
   }
 }
 
@@ -499,13 +613,68 @@ Format: `{field},{direction}` (e.g., `title,asc`, `updatedAt,desc`)
 5. **Caching**: Implement client-side caching for frequently accessed notes
 6. **Debouncing**: Debounce search input to avoid excessive API calls
 
-## Testing the API
+## CORS and Deployment
 
-### Using Swagger UI
-Access the interactive API documentation at:
+### Development Setup
+The backend is configured to accept requests from common development ports:
+- React (Create React App): `http://localhost:3000`
+- Vite (Vue/React/Svelte): `http://localhost:5173`
+- Angular CLI: `http://localhost:4200`
+
+### Production Deployment
+
+#### Frontend on Vercel
+1. Deploy your frontend to Vercel at `https://notedoc-alpha.vercel.app`
+2. The backend is already configured to accept requests from this URL
+3. No additional CORS configuration needed
+
+#### Custom Domain
+If using a custom domain, set the `CORS_PRODUCTION_DOMAINS` environment variable on your backend:
+
+```bash
+CORS_PRODUCTION_DOMAINS=https://notedoc.yourdomain.com,https://app.yourdomain.com
 ```
-http://localhost:8080/swagger-ui.html
+
+#### Environment Variables for Frontend
+
+Create environment files for your frontend:
+
+**.env.local** (Development)
+```bash
+REACT_APP_API_URL=http://localhost:8080/api
+# or for Vite
+VITE_API_URL=http://localhost:8080/api
 ```
+
+**.env.production** (Production)
+```bash
+REACT_APP_API_URL=https://your-backend-app.onrender.com/api
+# or for Vite
+VITE_API_URL=https://your-backend-app.onrender.com/api
+```
+
+**Note**: The production frontend URL `https://notedoc-alpha.vercel.app` is already hardcoded in the backend CORS configuration.
+
+#### Updated Service Class with Environment Variables
+
+```typescript
+class NoteService {
+  private baseUrl: string;
+
+  constructor() {
+    // React
+    const apiUrl = process.env.REACT_APP_API_URL;
+    // or Vite
+    // const apiUrl = import.meta.env.VITE_API_URL;
+    
+    this.baseUrl = apiUrl || 'http://localhost:8080/api';
+  }
+
+  // ... rest of the methods
+}
+```
+
+## Testing the API
 
 ### Using curl Examples
 ```bash
@@ -528,5 +697,15 @@ curl "http://localhost:8080/api/notes/search?q=test&page=0&size=10"
 # Health check
 curl http://localhost:8080/api/health
 ```
+
+### Using Postman or Insomnia
+Import the following endpoints into your API testing tool:
+- `POST http://localhost:8080/api/notes` - Create note
+- `GET http://localhost:8080/api/notes` - Get all notes
+- `GET http://localhost:8080/api/notes/{id}` - Get note by ID
+- `PUT http://localhost:8080/api/notes/{id}` - Update note
+- `DELETE http://localhost:8080/api/notes/{id}` - Delete note
+- `GET http://localhost:8080/api/notes/search?q={query}` - Search notes
+- `GET http://localhost:8080/api/health` - Health check
 
 This guide provides everything needed to integrate with the NoteDoc backend API. The API follows REST conventions and provides comprehensive error handling and validation.
