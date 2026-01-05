@@ -7,11 +7,13 @@ This guide provides comprehensive documentation for integrating with the NoteDoc
 ### API Base URL
 ```
 # Development
-http://localhost:8080/api
+http://localhost:8080/api (or http://localhost:8080 for direct endpoints)
 
 # Production (replace with your actual backend URL)
-https://your-backend-app.onrender.com/api
+https://notedoc.onrender.com/api (or https://notedoc.onrender.com for direct endpoints)
 ```
+
+**Note**: The backend now supports both `/api/notes` and `/notes` endpoints for compatibility.
 
 ### Content Type
 All requests should use `Content-Type: application/json`
