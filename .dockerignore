@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs/
+
+# Environment files (will be passed as env vars)
+.env
+.env.local
+.env.production
+
+# Docker files (avoid recursion)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Maven wrapper (included in base image)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Test files
+src/test/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Node modules (if any frontend assets)
+node_modules/
+npm-debug.log*
+
+# Kiro files
+.kiro/

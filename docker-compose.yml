@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: notedoc-postgres
+    environment:
+      POSTGRES_DB: notedoc
+      POSTGRES_USER: notedoc_user
+      POSTGRES_PASSWORD: notedoc_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - notedoc-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notedoc_user -d notedoc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # NoteDoc Application (Production)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notedoc-app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: notedoc
+      DB_USERNAME: notedoc_user
+      DB_PASSWORD: notedoc_password
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - notedoc-network
+    restart: unless-stopped
+
+  # NoteDoc Application (Development)
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: notedoc-app-dev
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: notedoc
+      DB_USERNAME: notedoc_user
+      DB_PASSWORD: notedoc_password
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Debug port
+    volumes:
+      - .:/app
+      - maven_cache:/root/.m2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - notedoc-network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+  maven_cache:
+
+networks:
+  notedoc-network:
+    driver: bridge

@@ -1,0 +1,41 @@
+# Development Dockerfile with Maven and JDK
+# Includes both Maven and JDK for development and debugging
+
+FROM maven:3.9.6-eclipse-temurin-21
+
+WORKDIR /app
+
+# Install additional development tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    vim \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for development
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+# Copy pom.xml first for better layer caching
+COPY pom.xml .
+
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY . .
+
+# Change ownership to development user
+RUN chown -R appuser:appgroup /app
+
+# Switch to development user
+USER appuser
+
+# Expose port
+EXPOSE 8080
+
+# Expose debug port for remote debugging
+EXPOSE 5005
+
+# Default command for development (with hot reload)
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'"]
