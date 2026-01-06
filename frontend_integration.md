@@ -29,15 +29,15 @@ Currently using hardcoded user ID: `11111111-1111-1111-1111-111111111111`
 
 ## API Endpoints Overview
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/notes` | Create a new note |
-| GET | `/notes` | Get all notes (paginated) |
-| GET | `/notes/{id}` | Get specific note by ID |
-| PUT | `/notes/{id}` | Update existing note |
-| DELETE | `/notes/{id}` | Delete note (soft delete) |
-| GET | `/notes/search` | Search notes by query |
-| GET | `/health` | Health check endpoint |
+| Method | Endpoint | Alternative | Description |
+|--------|----------|-------------|-------------|
+| POST | `/api/notes` | `/notes` | Create a new note |
+| GET | `/api/notes` | `/notes` | Get all notes (paginated) |
+| GET | `/api/notes/{id}` | `/notes/{id}` | Get specific note by ID |
+| PUT | `/api/notes/{id}` | `/notes/{id}` | Update existing note |
+| DELETE | `/api/notes/{id}` | `/notes/{id}` | Delete note (soft delete) |
+| GET | `/api/notes/search` | `/notes/search` | Search notes by query |
+| GET | `/api/health` | `/health` | Health check endpoint |
 
 ## Data Models
 
@@ -306,10 +306,10 @@ class NoteService {
   private baseUrl: string;
 
   constructor() {
-    // Automatically detect environment
+    // Automatically detect environment and use direct endpoints (without /api prefix)
     this.baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://your-backend-app.onrender.com/api/notes'  // Replace with your backend URL
-      : 'http://localhost:8080/api/notes';
+      ? 'https://notedoc.onrender.com/notes'  // Direct endpoint for production
+      : 'http://localhost:8080/notes';        // Direct endpoint for development
   }
 
   // Default fetch options with CORS support
@@ -643,16 +643,16 @@ Create environment files for your frontend:
 
 **.env.local** (Development)
 ```bash
-REACT_APP_API_URL=http://localhost:8080/api
+REACT_APP_API_URL=http://localhost:8080
 # or for Vite
-VITE_API_URL=http://localhost:8080/api
+VITE_API_URL=http://localhost:8080
 ```
 
 **.env.production** (Production)
 ```bash
-REACT_APP_API_URL=https://your-backend-app.onrender.com/api
+REACT_APP_API_URL=https://notedoc.onrender.com
 # or for Vite
-VITE_API_URL=https://your-backend-app.onrender.com/api
+VITE_API_URL=https://notedoc.onrender.com
 ```
 
 **Note**: The production frontend URL `https://notedoc-alpha.vercel.app` is already hardcoded in the backend CORS configuration.
@@ -681,8 +681,9 @@ class NoteService {
 ### Using curl Examples
 ```bash
 # Create a note
-curl -X POST http://localhost:8080/api/notes \
+curl -X POST https://notedoc.onrender.com/notes \
   -H "Content-Type: application/json" \
+  -H "Origin: https://notedoc-alpha.vercel.app" \
   -d '{
     "title": "Test Note",
     "content": "This is a test note",
@@ -691,13 +692,16 @@ curl -X POST http://localhost:8080/api/notes \
   }'
 
 # Get all notes
-curl http://localhost:8080/api/notes
+curl https://notedoc.onrender.com/notes \
+  -H "Origin: https://notedoc-alpha.vercel.app"
 
 # Search notes
-curl "http://localhost:8080/api/notes/search?q=test&page=0&size=10"
+curl "https://notedoc.onrender.com/notes/search?q=test&page=0&size=10" \
+  -H "Origin: https://notedoc-alpha.vercel.app"
 
 # Health check
-curl http://localhost:8080/api/health
+curl https://notedoc.onrender.com/health \
+  -H "Origin: https://notedoc-alpha.vercel.app"
 ```
 
 ### Using Postman or Insomnia
